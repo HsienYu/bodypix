@@ -5,8 +5,8 @@ Params
 */
 
 let imageSize = {
-    width: 1920,
-    height: 1200
+    width: 1280,
+    height: 720
 };
 let capture;
 let pixelNoiseSlider;
@@ -29,9 +29,6 @@ let enableMultiPersonSegment;
 let numberOfPredict = 5;
 let segmentation;
 
-let deviceList = [];
-
-navigator.mediaDevices.enumerateDevices().then(getDevices);
 
 /* 
 =============
@@ -66,7 +63,7 @@ function setupCamera(id = ""){
     }else{
         let option = {
             video: {
-                deviceId: deviceList[0].id,
+                deviceId: id,
                 width: imageSize.width,
                 height: imageSize.height
             },
@@ -126,8 +123,8 @@ function drawWhenPredicted(){
 
     push();
     scale(-1,1);
-    image(capture,0,0,windowWidth,windowHeight);
-    //image(capture, -windowWidth, 0, windowWidth, windowHeight);
+    // image(capture,0,0,windowWidth,windowHeight);
+    image(capture, -windowWidth, 0, windowWidth, windowHeight);
     pop();
     
     if(segmentation != undefined){
@@ -148,7 +145,7 @@ async function updateBodyPixPixels(){
 
     // Update bodypix's segmented pixels
     for(let y=0;y<img.height;y++){
-        let param = 50; // pixelNoiseSlider.value();
+        let param = 200; // pixelNoiseSlider.value();
         let pixelNoise = Math.floor(noise(y*mic.getLevel()*0.2)*param-param/2);
         for(let x=0;x<img.width;x++){
             let index = (x + y * img.width);
@@ -161,15 +158,15 @@ async function updateBodyPixPixels(){
                 // capture.pixels[index*4 + 1] = 0;
                 // capture.pixels[index*4 + 2] = 0;
                 // capture.pixels[index*4 + 3] = 0;
-                // img.pixels[index*4] = capture.pixels[index_*4];
-                // img.pixels[index*4 + 1] = capture.pixels[index_*4 + 1];
-                // img.pixels[index*4 + 2] = capture.pixels[index_*4 + 2];
-                // img.pixels[index*4 + 3] = capture.pixels[index_*4 + 3];
-
-                img.pixels[index*4] = random(255);
+                img.pixels[index*4] = capture.pixels[index_*4];
                 img.pixels[index*4 + 1] = capture.pixels[index_*4 + 1];
                 img.pixels[index*4 + 2] = capture.pixels[index_*4 + 2];
                 img.pixels[index*4 + 3] = capture.pixels[index_*4 + 3];
+
+                // img.pixels[index*4] = random(255);
+                // img.pixels[index*4 + 1] = capture.pixels[index_*4 + 1];
+                // img.pixels[index*4 + 2] = capture.pixels[index_*4 + 2];
+                // img.pixels[index*4 + 3] = capture.pixels[index_*4 + 3];
             }else{
                 let index_ = index+pixelNoise
                 if(index_>img.width*img.height){
@@ -191,9 +188,9 @@ async function updateBodyPixPixels(){
     capture.updatePixels();
 
     push();
-    // scale(-1,1);
-    image(img, 0, 0, windowWidth, windowHeight);
-    // image(img, -windowWidth, 0, windowWidth, windowHeight);
+    scale(-1,1);
+    // image(img, 0, 0, windowWidth, windowHeight);
+    image(img, -windowWidth, 0, windowWidth, windowHeight);
     pop();
 }
 
